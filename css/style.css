@@ -45,6 +45,10 @@ a {
 	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
+article a {
+	color: #38d;
+}
+
 h2 {
 	font-size: 1.8em;
 }
