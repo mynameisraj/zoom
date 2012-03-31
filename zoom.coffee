@@ -27,6 +27,15 @@ class self.Zoom
 			
 	# Zoom selected image
 	zoom: (element) ->
+		if element.loaded
+			doZoom element
+		else
+			image = document.createElement "img"
+			image.onload = =>
+				doZoom element
+			image.src = element.getAttribute "href"
+		
+	doZoom: (element) ->
 		# Close the zoomed image
 		if @opened
 			@close()
