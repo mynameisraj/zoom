@@ -30,4 +30,3 @@ Zoom is not perfect. I made it for me, so I can't guarantee that it will work fo
 - Add cross-browser support
 - Add titles for images
 - Combine script.js and zoom.js into one
-- Auto include CSS

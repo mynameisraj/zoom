@@ -65,6 +65,10 @@ class self.Zoom
 		big.className = "image"
 		big.setAttribute "src", fullURL
 		
+		# Add styles to DOM image
+		big.style.webkitTransition = "-webkit-transform 0.3s"
+		big.style.display = "block" # For more accurate placement
+		
 		# Create wrapping div
 		wrap = document.createElement "div"
 		wrap.addEventListener "click", (e) =>
@@ -72,6 +76,12 @@ class self.Zoom
 			@close()
 		wrap.className = "wrap"
 		wrap.appendChild big
+		
+		# Add styles to wrapping div
+		wrap.style.webkitTransition = "-webkit-transform 0.3s, opacity 0.25s, box-shadow 0.2s"
+		wrap.style.position = "absolute"
+		wrap.style.left = "0"
+		wrap.style.top = "0"
 		
 		# Find the scale
 		scale = {
