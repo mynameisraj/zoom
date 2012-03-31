@@ -2,7 +2,7 @@ class self.Zoom
 	# Constructor
 	constructor: (@id, @boxShadow = "0 4px 15px rgba(0, 0, 0, 0.5)") ->
 		# Constants
-		ESCAPE = 27
+		@ESCAPE = 27
 		@TRANSITION_DURATION = 300
 		
 		@opened = false
@@ -12,12 +12,12 @@ class self.Zoom
 		@container = document.createElement "div"
 		@container.id = @id
 		document.body.appendChild(@container)
-		
-		# Close listeners
-		document.body.addEventListener "keyup", (e) =>
-			if e.keyCode is ESCAPE and @opened
-				e.preventDefault()
-				@close()
+			
+	# Key listener for escape
+	checkKey: (e) =>
+		if e.keyCode is @ESCAPE and @opened
+			e.preventDefault()
+			@close()
 	
 	# Click listener for outside box
 	checkClicked: (e) =>
@@ -71,9 +71,6 @@ class self.Zoom
 		
 		# Create wrapping div
 		wrap = document.createElement "div"
-		wrap.addEventListener "click", (e) =>
-			e.preventDefault()
-			@close()
 		wrap.className = "wrap"
 		wrap.appendChild big
 		
@@ -123,8 +120,12 @@ class self.Zoom
 				# Add a box shadow for flair
 				wrap.style.boxShadow = @boxShadow
 				
-				# Add click listener
+				# Add close listeners
 				document.body.addEventListener "click", @checkClicked, false
+				wrap.addEventListener "click", (e) =>
+					e.preventDefault()
+					@close()
+				document.body.addEventListener "keyup", @checkKey, false
 			, @TRANSITION_DURATION
 		, 0
 	
@@ -132,6 +133,7 @@ class self.Zoom
 	close: ->
 		# Remove click listener
 		document.body.removeEventListener "click", @checkClicked, false
+		document.body.removeEventListener "keyup", @checkKey, false
 		
 		@opened = false
 		
@@ -140,6 +142,8 @@ class self.Zoom
 		wrap.style.webkitTransform = @translateString
 		wrap.style.opacity = "0"
 		wrap.firstChild.style.webkitTransform = @scaleString
+		
+		# This throws an error sometimes, but I am not sure how to fix
 		window.setTimeout =>
 			@container.removeChild wrap
 		, @TRANSITION_DURATION

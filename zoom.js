@@ -3,24 +3,24 @@
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   self.Zoom = (function() {
     function Zoom(id, boxShadow) {
-      var ESCAPE;
       this.id = id;
       this.boxShadow = boxShadow != null ? boxShadow : "0 4px 15px rgba(0, 0, 0, 0.5)";
       this.checkClicked = __bind(this.checkClicked, this);
-      ESCAPE = 27;
+      this.checkKey = __bind(this.checkKey, this);
+      this.ESCAPE = 27;
       this.TRANSITION_DURATION = 300;
       this.opened = false;
       this.cache = [];
       this.container = document.createElement("div");
       this.container.id = this.id;
       document.body.appendChild(this.container);
-      document.body.addEventListener("keyup", __bind(function(e) {
-        if (e.keyCode === ESCAPE && this.opened) {
-          e.preventDefault();
-          return this.close();
-        }
-      }, this));
     }
+    Zoom.prototype.checkKey = function(e) {
+      if (e.keyCode === this.ESCAPE && this.opened) {
+        e.preventDefault();
+        return this.close();
+      }
+    };
     Zoom.prototype.checkClicked = function(e) {
       if (e.srcElement.className !== "image" && this.opened) {
         return this.close();
@@ -60,10 +60,6 @@
       big.style.webkitTransition = "-webkit-transform 0.3s";
       big.style.display = "block";
       wrap = document.createElement("div");
-      wrap.addEventListener("click", __bind(function(e) {
-        e.preventDefault();
-        return this.close();
-      }, this));
       wrap.className = "wrap";
       wrap.appendChild(big);
       wrap.style.webkitTransition = "-webkit-transform 0.3s, opacity 0.25s, box-shadow 0.2s";
@@ -97,13 +93,19 @@
           wrap.style.width = "" + width + "px";
           wrap.style.height = "" + height + "px";
           wrap.style.boxShadow = this.boxShadow;
-          return document.body.addEventListener("click", this.checkClicked, false);
+          document.body.addEventListener("click", this.checkClicked, false);
+          wrap.addEventListener("click", __bind(function(e) {
+            e.preventDefault();
+            return this.close();
+          }, this));
+          return document.body.addEventListener("keyup", this.checkKey, false);
         }, this), this.TRANSITION_DURATION);
       }, this), 0);
     };
     Zoom.prototype.close = function() {
       var wrap;
       document.body.removeEventListener("click", this.checkClicked, false);
+      document.body.removeEventListener("keyup", this.checkKey, false);
       this.opened = false;
       wrap = document.getElementsByClassName("wrap")[0];
       wrap.style.webkitTransform = this.translateString;
