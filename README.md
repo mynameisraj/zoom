@@ -4,8 +4,6 @@ Zoom is an easy way to zoom images on a page. It uses CSS3 transforms and transi
 **NOTE**: At this time, Zoom is only supported on Webkit browsers. I'm working on the others, though.
 
 ## Usage
-You need to include a few basic styles to use zoom. These are found in style.css.
-
 After including zoom.js and script.js, you can simply have linked images in the following format and Zoom will pick them up automatically:
 
 `<a href="FULL SIZE"><img src="THUMBNAIL"></a>`
