@@ -1,9 +1,8 @@
 class self.Zoom
 	# Constructor
-	constructor: (@id) ->
+	constructor: (@id, @boxShadow = "0 4px 15px rgba(0, 0, 0, 0.5)") ->
 		# Constants
 		ESCAPE = 27
-		@BOX_SHADOW = "0 4px 15px rgba(0, 0, 0, 0.5)"
 		@TRANSITION_DURATION = 300
 		
 		@opened = false
@@ -112,7 +111,7 @@ class self.Zoom
 				wrap.style.height = "#{height}px"
 				
 				# Add a box shadow for flair
-				wrap.style.boxShadow = @BOX_SHADOW
+				wrap.style.boxShadow = @boxShadow
 				
 				# Add click listener
 				document.body.addEventListener "click", @checkClicked, false
