@@ -29,11 +29,11 @@
     Zoom.prototype.zoom = function(element) {
       var image;
       if (element.loaded) {
-        return doZoom(element);
+        return this.doZoom(element);
       } else {
         image = document.createElement("img");
         image.onload = __bind(function() {
-          return doZoom(element);
+          return this.doZoom(element);
         }, this);
         return image.src = element.getAttribute("href");
       }

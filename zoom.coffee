@@ -28,11 +28,11 @@ class self.Zoom
 	# Zoom selected image
 	zoom: (element) ->
 		if element.loaded
-			doZoom element
+			@doZoom element
 		else
 			image = document.createElement "img"
 			image.onload = =>
-				doZoom element
+				@doZoom element
 			image.src = element.getAttribute "href"
 		
 	doZoom: (element) ->
