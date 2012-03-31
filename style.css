@@ -1,0 +1,12 @@
+.wrap {
+	-webkit-transition: -webkit-transform 0.3s, opacity 0.25s, box-shadow 0.2s;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0);
+	left: 0;
+	top: 0;
+	position: absolute;
+}
+
+.image {
+	display: block;
+	-webkit-transition: -webkit-transform 0.3s;
+}
