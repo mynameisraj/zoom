@@ -1,22 +1,3 @@
-/* gallery stuff */
-
-.wrap {
-	-webkit-transition: -webkit-transform 0.3s, opacity 0.25s, box-shadow 0.2s;
-	left: 0;
-	top: 0;
-	position: absolute;
-}
-
-.image {
-	display: block;
-	-webkit-transition: -webkit-transform 0.3s;
-	position: absolute;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	top: 0;
-}
-
 /* page-specific stuff */
 
 * {

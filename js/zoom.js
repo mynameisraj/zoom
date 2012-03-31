@@ -2,12 +2,12 @@
   var getPosition;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   self.Zoom = (function() {
-    function Zoom(id) {
+    function Zoom(id, boxShadow) {
       var ESCAPE;
       this.id = id;
+      this.boxShadow = boxShadow != null ? boxShadow : "0 4px 15px rgba(0, 0, 0, 0.5)";
       this.checkClicked = __bind(this.checkClicked, this);
       ESCAPE = 27;
-      this.BOX_SHADOW = "0 4px 15px rgba(0, 0, 0, 0.5)";
       this.TRANSITION_DURATION = 300;
       this.opened = false;
       this.cache = [];
@@ -26,6 +26,8 @@
         return this.close();
       }
     };
+    Zoom.prototype.showLoadingIndicator = function() {};
+    Zoom.prototype.hideLoadingIndicator = function() {};
     Zoom.prototype.zoom = function(element) {
       var image;
       if (element.loaded) {
@@ -55,6 +57,8 @@
       big = document.createElement("img");
       big.className = "image";
       big.setAttribute("src", fullURL);
+      big.style.webkitTransition = "-webkit-transform 0.3s";
+      big.style.display = "block";
       wrap = document.createElement("div");
       wrap.addEventListener("click", __bind(function(e) {
         e.preventDefault();
@@ -62,6 +66,10 @@
       }, this));
       wrap.className = "wrap";
       wrap.appendChild(big);
+      wrap.style.webkitTransition = "-webkit-transform 0.3s, opacity 0.25s, box-shadow 0.2s";
+      wrap.style.position = "absolute";
+      wrap.style.left = "0";
+      wrap.style.top = "0";
       scale = {
         x: thumb.offsetWidth / width,
         y: thumb.offsetHeight / height
@@ -88,7 +96,7 @@
           wrap.style.left = "50%";
           wrap.style.width = "" + width + "px";
           wrap.style.height = "" + height + "px";
-          wrap.style.boxShadow = this.BOX_SHADOW;
+          wrap.style.boxShadow = this.boxShadow;
           return document.body.addEventListener("click", this.checkClicked, false);
         }, this), this.TRANSITION_DURATION);
       }, this), 0);
