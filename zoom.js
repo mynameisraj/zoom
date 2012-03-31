@@ -26,6 +26,8 @@
         return this.close();
       }
     };
+    Zoom.prototype.showLoadingIndicator = function() {};
+    Zoom.prototype.hideLoadingIndicator = function() {};
     Zoom.prototype.zoom = function(element) {
       var image;
       if (element.loaded) {

@@ -25,6 +25,14 @@ class self.Zoom
 		if e.srcElement.className isnt "image" and @opened
 			@close()
 			
+	# Shows the loading indicator
+	showLoadingIndicator: ->
+		# You can fill out this function if you need a loading indicator to be displayed
+	
+	# Hides the loading indicator
+	hideLoadingIndicator: ->
+		# Here is where you hide the loading indicator that you created above
+			
 	# Zoom selected image
 	zoom: (element) ->
 		if element.loaded

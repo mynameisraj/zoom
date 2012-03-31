@@ -37,10 +37,12 @@ handleZoom = (e) ->
 	if @loaded
 		window.zoom.zoom this
 	else
+		window.zoom.showLoadingIndicator()
 		image = document.createElement "img"
 		image.onload = =>
 			@loaded = true
 			window.zoom.cache[image.src] = image
+			window.zoom.hideLoadingIndicator()
 			window.zoom.zoom this
 		image.src = @getAttribute "href"		
 	

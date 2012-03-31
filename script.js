@@ -42,10 +42,12 @@
     if (this.loaded) {
       return window.zoom.zoom(this);
     } else {
+      window.zoom.showLoadingIndicator();
       image = document.createElement("img");
       image.onload = __bind(function() {
         this.loaded = true;
         window.zoom.cache[image.src] = image;
+        window.zoom.hideLoadingIndicator();
         return window.zoom.zoom(this);
       }, this);
       return image.src = this.getAttribute("href");
