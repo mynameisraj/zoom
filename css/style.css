@@ -1,0 +1,87 @@
+/* gallery stuff */
+
+.wrap {
+	-webkit-transition: -webkit-transform 0.3s, opacity 0.25s, box-shadow 0.2s;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0);
+	left: 0;
+	top: 0;
+	position: absolute;
+}
+
+.image {
+	display: block;
+	-webkit-transition: -webkit-transform 0.3s;
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	top: 0;
+}
+
+/* page-specific stuff */
+
+* {
+	margin: 0;
+	padding: 0;
+	line-height: inherit;
+	font-size: 1em;
+}
+
+body {
+	background: #eee;
+	font: 14px/1.6 "Helvetica Neue", Helvetica, sans-serif;
+}
+
+#container {
+	background: #fff;
+	border-radius: 10px;
+	margin: 50px auto;
+	padding: 40px 40px 20px;
+	position: relative;
+	width: 710px;
+}
+
+a {
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+h2 {
+	font-size: 1.8em;
+}
+
+h3 {
+	font-size: 1em;
+	font-weight: normal;
+	margin: 0 0 20px;
+}
+
+#gh-logo {
+	position: absolute;
+	top: 46px;
+	right: 40px;
+}
+
+p {
+	margin-bottom: 10px;
+}
+
+.connor {
+	font-style: italic;
+	margin-top: 30px;
+	text-align: center;
+}
+
+.connor a {
+	color: #74a31b;
+}
+
+#photos {
+	list-style: none;
+	margin-top: 40px;
+	text-align: center;
+}
+
+#photos li {
+	display: inline-block;
+	margin: 0 10px 20px;
+}
