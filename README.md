@@ -12,6 +12,7 @@ After including zoom.js and script.js, you can simply have linked images in the 
 
 Zoom will cache the images on mouseover, and it will wait before loading the image.
 
+## Advanced Usage
 If you want to use Zoom in a more customized way, though, you can.
 
 #### Creating a new `Zoom` object
