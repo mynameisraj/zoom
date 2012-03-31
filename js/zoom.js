@@ -27,6 +27,18 @@
       }
     };
     Zoom.prototype.zoom = function(element) {
+      var image;
+      if (element.loaded) {
+        return this.doZoom(element);
+      } else {
+        image = document.createElement("img");
+        image.onload = __bind(function() {
+          return this.doZoom(element);
+        }, this);
+        return image.src = element.getAttribute("href");
+      }
+    };
+    Zoom.prototype.doZoom = function(element) {
       var big, finalScaleString, finalTranslateString, finalX, finalY, fullURL, height, image, posX, posY, position, scale, scrollTop, thumb, width, wrap;
       if (this.opened) {
         this.close();
