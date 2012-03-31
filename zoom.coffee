@@ -137,7 +137,6 @@ class self.Zoom
 		
 		# Remove styles, shrink, and delete wrap
 		wrap = document.getElementsByClassName("wrap")[0]
-		wrap.style.boxShadow = "none"
 		wrap.style.webkitTransform = @translateString
 		wrap.style.opacity = "0"
 		wrap.firstChild.style.webkitTransform = @scaleString
