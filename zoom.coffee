@@ -1,6 +1,6 @@
 class self.Zoom
 	# Constructor
-	constructor: (@id, @boxShadow = "0 4px 15px rgba(0, 0, 0, 0.5)") ->
+	constructor: (@id, @boxShadow = "0 4px 15px rgba(0, 0, 0, 0.5)", @titleStyle = "background-color: #fff; text-align: center; padding: 5px 0; font: 14px/1 Helvetica, sans-serif") ->
 		# Constants
 		@ESCAPE = 27
 		@TRANSITION_DURATION = 300
@@ -54,6 +54,22 @@ class self.Zoom
 		width = image.width
 		height = image.height
 		
+		# Create title, recompute height
+		if element.getAttribute "title"
+			title = document.createElement "div"
+			title.className = "title"
+			title.innerHTML = element.getAttribute "title"
+			title.setAttribute("style", @titleStyle)
+			
+			###
+			Little trick to get the offsetHeight
+			Quickly add and remove title
+			###
+			title.style.visibility = "hidden"
+			document.body.appendChild title
+			height += title.offsetHeight
+			document.body.removeChild title
+		
 		# Figure out where our element is based on its thumbnail
 		thumb = element.firstChild
 		position = getPosition thumb
@@ -73,6 +89,8 @@ class self.Zoom
 		wrap = document.createElement "div"
 		wrap.className = "wrap"
 		wrap.appendChild big
+		if element.getAttribute "title"
+			wrap.appendChild title
 		
 		# Add styles to wrapping div
 		wrap.style.webkitTransition = "-webkit-transform 0.3s, opacity 0.25s, box-shadow 0.2s"
@@ -119,6 +137,10 @@ class self.Zoom
 				
 				# Add a box shadow for flair
 				wrap.style.boxShadow = @boxShadow
+				
+				# Show title
+				if element.getAttribute "title"
+					title.style.visibility = "visible"
 				
 				# Add close listeners
 				document.body.addEventListener "click", @checkClicked, false

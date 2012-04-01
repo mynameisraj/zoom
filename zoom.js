@@ -2,9 +2,10 @@
   var getPosition;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   self.Zoom = (function() {
-    function Zoom(id, boxShadow) {
+    function Zoom(id, boxShadow, titleStyle) {
       this.id = id;
       this.boxShadow = boxShadow != null ? boxShadow : "0 4px 15px rgba(0, 0, 0, 0.5)";
+      this.titleStyle = titleStyle != null ? titleStyle : "background-color: #fff; text-align: center; padding: 5px 0; font: 14px/1 Helvetica, sans-serif";
       this.checkClicked = __bind(this.checkClicked, this);
       this.checkKey = __bind(this.checkKey, this);
       this.ESCAPE = 27;
@@ -41,7 +42,7 @@
       }
     };
     Zoom.prototype.doZoom = function(element) {
-      var big, finalScaleString, finalTranslateString, finalX, finalY, fullURL, height, image, posX, posY, position, scale, scrollTop, thumb, width, wrap;
+      var big, finalScaleString, finalTranslateString, finalX, finalY, fullURL, height, image, posX, posY, position, scale, scrollTop, thumb, title, width, wrap;
       if (this.opened) {
         this.close();
       }
@@ -50,6 +51,20 @@
       image = this.cache[fullURL];
       width = image.width;
       height = image.height;
+      if (element.getAttribute("title")) {
+        title = document.createElement("div");
+        title.className = "title";
+        title.innerHTML = element.getAttribute("title");
+        title.setAttribute("style", this.titleStyle);
+        /*
+        			Little trick to get the offsetHeight
+        			Quickly add and remove title
+        			*/
+        title.style.visibility = "hidden";
+        document.body.appendChild(title);
+        height += title.offsetHeight;
+        document.body.removeChild(title);
+      }
       thumb = element.firstChild;
       position = getPosition(thumb);
       posX = position.x - (width - thumb.offsetWidth) / 2;
@@ -62,6 +77,9 @@
       wrap = document.createElement("div");
       wrap.className = "wrap";
       wrap.appendChild(big);
+      if (element.getAttribute("title")) {
+        wrap.appendChild(title);
+      }
       wrap.style.webkitTransition = "-webkit-transform 0.3s, opacity 0.25s, box-shadow 0.2s";
       wrap.style.position = "absolute";
       wrap.style.left = "0";
@@ -93,6 +111,9 @@
           wrap.style.width = "" + width + "px";
           wrap.style.height = "" + height + "px";
           wrap.style.boxShadow = this.boxShadow;
+          if (element.getAttribute("title")) {
+            title.style.visibility = "visible";
+          }
           document.body.addEventListener("click", this.checkClicked, false);
           wrap.addEventListener("click", __bind(function(e) {
             e.preventDefault();
