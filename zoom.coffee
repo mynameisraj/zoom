@@ -167,7 +167,10 @@ class self.Zoom
 		
 		# This throws an error sometimes, but I am not sure how to fix
 		window.setTimeout =>
-			@container.removeChild wrap
+			try	
+				@container.removeChild wrap			
+			catch error
+				console.log error
 		, @TRANSITION_DURATION
 
 ###
