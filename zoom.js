@@ -158,7 +158,10 @@
       closeDelay = 50;
       newTransitionDuration = closeDelay + this.TRANSITION_DURATION;
       wrap = document.getElementsByClassName("wrap")[0];
-      wrap.style.boxShadow = "none";
+      wrap.style.webkitTransition = wrap.style.webkitTransition.replace(", box-shadow 0.2s", "");
+      window.setTimeout(function() {
+        return wrap.style.boxShadow = "none";
+      }, 0);
       window.setTimeout(function() {
         wrap.style.webkitTransform = _this.translateString;
         wrap.style.opacity = "0";
