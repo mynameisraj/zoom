@@ -13,7 +13,7 @@ addLinkListeners = ->
 		".jpeg",
 		".bmp",
 		".tiff",
-		".webm"
+		".webp"
 	]
 	
 	# Run through every link on the page
@@ -21,13 +21,11 @@ addLinkListeners = ->
 		# Check if link contains a filetype
 		for type in fileTypes
 			if a.getAttribute("href").match(type)
-				# See if the link has any children
-				try
-					if a.firstChild is a.getElementsByTagName("img")[0]
-						# Add the listeners (finally!)
-						a.addEventListener "mouseover", cacheImage, false
-						a.addEventListener "click", handleZoom, false
-				catch e
+				# See if the link has any children, and if it's an image
+				if a.childNodes.length isnt 0 and a.firstChild is a.getElementsByTagName("img")[0]
+					# Add the listeners (finally!)
+					a.addEventListener "mouseover", cacheImage, false
+					a.addEventListener "click", handleZoom, false
 					
 # Handles zoom on click
 handleZoom = (e) ->
@@ -40,9 +38,9 @@ handleZoom = (e) ->
 		window.zoom.showLoadingIndicator()
 		image = document.createElement "img"
 		image.onload = =>
-			@loaded = true
 			window.zoom.cache[image.src] = image
 			window.zoom.hideLoadingIndicator()
+			@loaded = true
 			window.zoom.zoom this
 		image.src = @getAttribute "href"		
 	
