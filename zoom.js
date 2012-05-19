@@ -156,6 +156,7 @@
       document.body.removeEventListener("keyup", this.checkKey, false);
       this.opened = false;
       wrap = document.getElementsByClassName("wrap")[0];
+      wrap.style.boxShadow = "none";
       wrap.style.webkitTransform = this.translateString;
       wrap.style.opacity = "0";
       wrap.firstChild.style.webkitTransform = this.scaleString;
