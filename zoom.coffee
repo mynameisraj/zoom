@@ -1,3 +1,5 @@
+window.verbose = false
+
 class self.Zoom
 	# Constructor
 	constructor: (@id, @boxShadow = "0 4px 15px rgba(0, 0, 0, 0.5)", @titleStyle = "background-color: #fff; text-align: center; padding: 5px 0; font: 14px/1 Helvetica, sans-serif") ->
@@ -127,7 +129,7 @@ class self.Zoom
 		
 		# Animate the big change
 		window.setTimeout =>
-			console.log finalTranslateString
+			if window.verbose then console.log finalTranslateString
 			wrap.style.opacity = "1"
 			wrap.style.webkitTransform = finalTranslateString
 			big.style.webkitTransform = finalScaleString
@@ -174,7 +176,7 @@ class self.Zoom
 			try	
 				@container.removeChild wrap			
 			catch error
-				console.log error
+				if window.verbose then console.log error
 		, @TRANSITION_DURATION
 
 ###

@@ -3,6 +3,8 @@
   var getPosition,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
+  window.verbose = false;
+
   self.Zoom = (function() {
 
     Zoom.name = 'Zoom';
@@ -121,7 +123,9 @@
       finalScaleString = "scale3d(1, 1, 1)";
       finalTranslateString = "translate3d(" + finalX + "px, " + finalY + "px, 0)";
       return window.setTimeout(function() {
-        console.log(finalTranslateString);
+        if (window.verbose) {
+          console.log(finalTranslateString);
+        }
         wrap.style.opacity = "1";
         wrap.style.webkitTransform = finalTranslateString;
         big.style.webkitTransform = finalScaleString;
@@ -159,7 +163,9 @@
         try {
           return _this.container.removeChild(wrap);
         } catch (error) {
-          return console.log(error);
+          if (window.verbose) {
+            return console.log(error);
+          }
         }
       }, this.TRANSITION_DURATION);
     };

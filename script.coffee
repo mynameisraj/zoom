@@ -1,6 +1,6 @@
 # Called when page is loaded
 init = ->
-	console.log "loaded"
+	if window.verbose then console.log "loaded"
 	window.zoom = new Zoom "z"
 	addLinkListeners()
 	

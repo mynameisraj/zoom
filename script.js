@@ -3,14 +3,16 @@
   var addLinkListeners, cacheImage, handleZoom, init;
 
   init = function() {
-    console.log("loaded");
+    if (window.verbose) {
+      console.log("loaded");
+    }
     window.zoom = new Zoom("z");
     return addLinkListeners();
   };
 
   addLinkListeners = function() {
     var a, fileTypes, type, _i, _len, _ref, _results;
-    fileTypes = [".jpg", ".png", ".gif", ".jpeg", ".bmp", ".tiff", ".webm"];
+    fileTypes = [".jpg", ".png", ".gif", ".jpeg", ".bmp", ".tiff", ".webp"];
     _ref = document.getElementsByTagName("a");
     _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -47,9 +49,9 @@
       window.zoom.showLoadingIndicator();
       image = document.createElement("img");
       image.onload = function() {
-        _this.loaded = true;
         window.zoom.cache[image.src] = image;
         window.zoom.hideLoadingIndicator();
+        _this.loaded = true;
         return window.zoom.zoom(_this);
       };
       return image.src = this.getAttribute("href");
