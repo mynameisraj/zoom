@@ -165,12 +165,17 @@ class self.Zoom
 		
 		@opened = false
 		
+		closeDelay = 50
+		newTransitionDuration = closeDelay + @TRANSITION_DURATION
+		
 		# Remove styles, shrink, and delete wrap
 		wrap = document.getElementsByClassName("wrap")[0]
 		wrap.style.boxShadow = "none"
-		wrap.style.webkitTransform = @translateString
-		wrap.style.opacity = "0"
-		wrap.firstChild.style.webkitTransform = @scaleString
+		window.setTimeout =>
+			wrap.style.webkitTransform = @translateString
+			wrap.style.opacity = "0"
+			wrap.firstChild.style.webkitTransform = @scaleString
+		, closeDelay
 		
 		# This throws an error sometimes, but I am not sure how to fix
 		window.setTimeout =>
@@ -178,7 +183,7 @@ class self.Zoom
 				@container.removeChild wrap			
 			catch error
 				if window.verbose then console.log error
-		, @TRANSITION_DURATION
+		, newTransitionDuration
 
 ###
 Returns the absolute position of an element.

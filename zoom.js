@@ -150,16 +150,20 @@
     };
 
     Zoom.prototype.close = function() {
-      var wrap,
+      var closeDelay, newTransitionDuration, wrap,
         _this = this;
       document.body.removeEventListener("click", this.checkClicked, false);
       document.body.removeEventListener("keyup", this.checkKey, false);
       this.opened = false;
+      closeDelay = 50;
+      newTransitionDuration = closeDelay + this.TRANSITION_DURATION;
       wrap = document.getElementsByClassName("wrap")[0];
       wrap.style.boxShadow = "none";
-      wrap.style.webkitTransform = this.translateString;
-      wrap.style.opacity = "0";
-      wrap.firstChild.style.webkitTransform = this.scaleString;
+      window.setTimeout(function() {
+        wrap.style.webkitTransform = _this.translateString;
+        wrap.style.opacity = "0";
+        return wrap.firstChild.style.webkitTransform = _this.scaleString;
+      }, closeDelay);
       return window.setTimeout(function() {
         try {
           return _this.container.removeChild(wrap);
@@ -168,7 +172,7 @@
             return console.log(error);
           }
         }
-      }, this.TRANSITION_DURATION);
+      }, newTransitionDuration);
     };
 
     return Zoom;
