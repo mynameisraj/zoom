@@ -64,6 +64,11 @@
       this.opened = true;
       fullURL = element.getAttribute("href");
       image = this.cache[fullURL];
+      if (image === void 0) {
+        image = document.createElement("img");
+        image.setAttribute("src", fullURL);
+        this.cache[fullURL] = image;
+      }
       width = image.width;
       height = image.height;
       if (element.getAttribute("title")) {

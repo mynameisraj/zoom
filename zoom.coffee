@@ -51,6 +51,10 @@ class self.Zoom
 		# Retrieve cached image
 		fullURL = element.getAttribute "href"
 		image = @cache[fullURL]
+		if image is undefined
+			image = document.createElement "img"
+			image.setAttribute "src", fullURL
+			@cache[fullURL] = image
 		width = image.width
 		height = image.height
 		
