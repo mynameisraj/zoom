@@ -3,23 +3,64 @@ window.verbose = false
 class self.Zoom
 	# Constructor
 	constructor: (@id, @boxShadow = "0 4px 15px rgba(0, 0, 0, 0.5)", @titleStyle = "background-color: #fff; text-align: center; padding: 5px 0; font: 14px/1 Helvetica, sans-serif") ->
-		# Constants
+		# Keyboard Constants
 		@ESCAPE = 27
+		@SHIFT = 16
+
+		# Transition stuff
 		@TRANSITION_DURATION = 300
+		@SLOW_MODE_MULTIPLIER = 3
+		@BOX_SHADOW_OFFSET = 100
+		@OPACITY_OFFSET = 50
+		@ACTIVE_DURATION = @TRANSITION_DURATION
+		@computeDurations()
+		
+		# Close delay (needed for choppiness fix)
+		@CLOSE_DELAY = 50
 		
 		@opened = false
 		@cache = []
+		@slowModeState = false
 		
 		# Create a container for whole thing
 		@container = document.createElement "div"
 		@container.id = @id
 		document.body.appendChild(@container)
+		
+		# Add slow listeners
+		document.body.addEventListener "keydown", @startSlowMode, false
+		document.body.addEventListener "keyup", @endSlowMode, false
+		
+	# Computes durations for animations
+	computeDurations: ->
+		@TRANSFORM_DURATION = @ACTIVE_DURATION
+		@BOX_SHADOW_DURATION = Math.abs(@ACTIVE_DURATION - @BOX_SHADOW_OFFSET)
+		@OPACITY_DURATION = Math.abs(@ACTIVE_DURATION - @OPACITY_OFFSET)
+		if @opened
+			big = @container.getElementsByClassName("image")[0]
+			big.style.webkitTransition = "-webkit-transform #{@TRANSFORM_DURATION}ms"
+			wrap = @container.getElementsByClassName("wrap")[0]
+			wrap.style.webkitTransition = "-webkit-transform #{@TRANSFORM_DURATION}ms, opacity #{@OPACITY_DURATION}ms, box-shadow #{@BOX_SHADOW_DURATION}ms"
 			
 	# Key listener for escape
-	checkKey: (e) =>
+	checkKeyClosed: (e) =>
 		if e.keyCode is @ESCAPE and @opened
 			e.preventDefault()
 			@close()
+
+	# Enter slow mode
+	startSlowMode: (e) =>
+		if e.keyCode is @SHIFT
+			@ACTIVE_DURATION = @TRANSITION_DURATION * @SLOW_MODE_MULTIPLIER
+			@computeDurations()
+			@slowModeState = true
+	
+	# Exit slow mode
+	endSlowMode: (e) =>
+		if e.keyCode is @SHIFT
+			@ACTIVE_DURATION = @TRANSITION_DURATION
+			@computeDurations()		
+			@slowModeState = false
 	
 	# Click listener for outside box
 	checkClicked: (e) =>
@@ -88,7 +129,7 @@ class self.Zoom
 		big.setAttribute "src", fullURL
 		
 		# Add styles to DOM image
-		big.style.webkitTransition = "-webkit-transform 0.3s"
+		big.style.webkitTransition = "-webkit-transform #{@TRANSFORM_DURATION}ms"
 		big.style.display = "block" # For more accurate placement
 		
 		# Create wrapping div
@@ -99,7 +140,7 @@ class self.Zoom
 			wrap.appendChild title
 		
 		# Add styles to wrapping div
-		wrap.style.webkitTransition = "-webkit-transform 0.3s, opacity 0.25s, box-shadow 0.2s"
+		wrap.style.webkitTransition = "-webkit-transform #{@TRANSFORM_DURATION}ms, opacity #{@OPACITY_DURATION}ms, box-shadow #{@BOX_SHADOW_DURATION}ms"
 		wrap.style.position = "absolute"
 		wrap.style.left = "0"
 		wrap.style.top = "0"
@@ -153,24 +194,23 @@ class self.Zoom
 				wrap.addEventListener "click", (e) =>
 					e.preventDefault()
 					@close()
-				document.body.addEventListener "keyup", @checkKey, false
-			, @TRANSITION_DURATION
+				document.body.addEventListener "keyup", @checkKeyClosed, false
+			, @ACTIVE_DURATION
 		, 0
 	
 	# Close it	
 	close: ->
 		# Remove click listener
 		document.body.removeEventListener "click", @checkClicked, false
-		document.body.removeEventListener "keyup", @checkKey, false
+		document.body.removeEventListener "keyup", @checkKeyClosed, false
 		
 		@opened = false
 		
-		closeDelay = 50
-		newTransitionDuration = closeDelay + @TRANSITION_DURATION
+		newTransitionDuration = @CLOSE_DELAY + @ACTIVE_DURATION
 		
 		# Remove styles, shrink, and delete wrap
 		wrap = document.getElementsByClassName("wrap")[0]
-		wrap.style.webkitTransition = wrap.style.webkitTransition.replace ", box-shadow 0.2s", ""
+		wrap.style.webkitTransition = wrap.style.webkitTransition.replace ", box-shadow #{@BOX_SHADOW_DURATION}ms", ""
 		window.setTimeout =>
 			wrap.style.boxShadow = "none"
 		, 0
@@ -178,7 +218,7 @@ class self.Zoom
 			wrap.style.webkitTransform = @translateString
 			wrap.style.opacity = "0"
 			wrap.firstChild.style.webkitTransform = @scaleString
-		, closeDelay
+		, @CLOSE_DELAY
 		
 		# This throws an error sometimes, but I am not sure how to fix
 		window.setTimeout =>

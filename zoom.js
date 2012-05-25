@@ -15,21 +15,64 @@
       this.titleStyle = titleStyle != null ? titleStyle : "background-color: #fff; text-align: center; padding: 5px 0; font: 14px/1 Helvetica, sans-serif";
       this.checkClicked = __bind(this.checkClicked, this);
 
-      this.checkKey = __bind(this.checkKey, this);
+      this.endSlowMode = __bind(this.endSlowMode, this);
+
+      this.startSlowMode = __bind(this.startSlowMode, this);
+
+      this.checkKeyClosed = __bind(this.checkKeyClosed, this);
 
       this.ESCAPE = 27;
+      this.SHIFT = 16;
       this.TRANSITION_DURATION = 300;
+      this.SLOW_MODE_MULTIPLIER = 3;
+      this.BOX_SHADOW_OFFSET = 100;
+      this.OPACITY_OFFSET = 50;
+      this.ACTIVE_DURATION = this.TRANSITION_DURATION;
+      this.computeDurations();
+      this.CLOSE_DELAY = 50;
       this.opened = false;
       this.cache = [];
+      this.slowModeState = false;
       this.container = document.createElement("div");
       this.container.id = this.id;
       document.body.appendChild(this.container);
+      document.body.addEventListener("keydown", this.startSlowMode, false);
+      document.body.addEventListener("keyup", this.endSlowMode, false);
     }
 
-    Zoom.prototype.checkKey = function(e) {
+    Zoom.prototype.computeDurations = function() {
+      var big, wrap;
+      this.TRANSFORM_DURATION = this.ACTIVE_DURATION;
+      this.BOX_SHADOW_DURATION = Math.abs(this.ACTIVE_DURATION - this.BOX_SHADOW_OFFSET);
+      this.OPACITY_DURATION = Math.abs(this.ACTIVE_DURATION - this.OPACITY_OFFSET);
+      if (this.opened) {
+        big = this.container.getElementsByClassName("image")[0];
+        big.style.webkitTransition = "-webkit-transform " + this.TRANSFORM_DURATION + "ms";
+        wrap = this.container.getElementsByClassName("wrap")[0];
+        return wrap.style.webkitTransition = "-webkit-transform " + this.TRANSFORM_DURATION + "ms, opacity " + this.OPACITY_DURATION + "ms, box-shadow " + this.BOX_SHADOW_DURATION + "ms";
+      }
+    };
+
+    Zoom.prototype.checkKeyClosed = function(e) {
       if (e.keyCode === this.ESCAPE && this.opened) {
         e.preventDefault();
         return this.close();
+      }
+    };
+
+    Zoom.prototype.startSlowMode = function(e) {
+      if (e.keyCode === this.SHIFT) {
+        this.ACTIVE_DURATION = this.TRANSITION_DURATION * this.SLOW_MODE_MULTIPLIER;
+        this.computeDurations();
+        return this.slowModeState = true;
+      }
+    };
+
+    Zoom.prototype.endSlowMode = function(e) {
+      if (e.keyCode === this.SHIFT) {
+        this.ACTIVE_DURATION = this.TRANSITION_DURATION;
+        this.computeDurations();
+        return this.slowModeState = false;
       }
     };
 
@@ -95,7 +138,7 @@
       big = document.createElement("img");
       big.className = "image";
       big.setAttribute("src", fullURL);
-      big.style.webkitTransition = "-webkit-transform 0.3s";
+      big.style.webkitTransition = "-webkit-transform " + this.TRANSFORM_DURATION + "ms";
       big.style.display = "block";
       wrap = document.createElement("div");
       wrap.className = "wrap";
@@ -103,7 +146,7 @@
       if (element.getAttribute("title")) {
         wrap.appendChild(title);
       }
-      wrap.style.webkitTransition = "-webkit-transform 0.3s, opacity 0.25s, box-shadow 0.2s";
+      wrap.style.webkitTransition = "-webkit-transform " + this.TRANSFORM_DURATION + "ms, opacity " + this.OPACITY_DURATION + "ms, box-shadow " + this.BOX_SHADOW_DURATION + "ms";
       wrap.style.position = "absolute";
       wrap.style.left = "0";
       wrap.style.top = "0";
@@ -144,21 +187,20 @@
             e.preventDefault();
             return _this.close();
           });
-          return document.body.addEventListener("keyup", _this.checkKey, false);
-        }, _this.TRANSITION_DURATION);
+          return document.body.addEventListener("keyup", _this.checkKeyClosed, false);
+        }, _this.ACTIVE_DURATION);
       }, 0);
     };
 
     Zoom.prototype.close = function() {
-      var closeDelay, newTransitionDuration, wrap,
+      var newTransitionDuration, wrap,
         _this = this;
       document.body.removeEventListener("click", this.checkClicked, false);
-      document.body.removeEventListener("keyup", this.checkKey, false);
+      document.body.removeEventListener("keyup", this.checkKeyClosed, false);
       this.opened = false;
-      closeDelay = 50;
-      newTransitionDuration = closeDelay + this.TRANSITION_DURATION;
+      newTransitionDuration = this.CLOSE_DELAY + this.ACTIVE_DURATION;
       wrap = document.getElementsByClassName("wrap")[0];
-      wrap.style.webkitTransition = wrap.style.webkitTransition.replace(", box-shadow 0.2s", "");
+      wrap.style.webkitTransition = wrap.style.webkitTransition.replace(", box-shadow " + this.BOX_SHADOW_DURATION + "ms", "");
       window.setTimeout(function() {
         return wrap.style.boxShadow = "none";
       }, 0);
@@ -166,7 +208,7 @@
         wrap.style.webkitTransform = _this.translateString;
         wrap.style.opacity = "0";
         return wrap.firstChild.style.webkitTransform = _this.scaleString;
-      }, closeDelay);
+      }, this.CLOSE_DELAY);
       return window.setTimeout(function() {
         try {
           return _this.container.removeChild(wrap);
