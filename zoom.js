@@ -29,7 +29,7 @@
       this.OPACITY_OFFSET = 50;
       this.ACTIVE_DURATION = this.TRANSITION_DURATION;
       this.computeDurations();
-      this.CLOSE_DELAY = 50;
+      this.CLOSE_DELAY = 0;
       this.opened = false;
       this.cache = [];
       this.slowModeState = false;
@@ -63,16 +63,14 @@
     Zoom.prototype.startSlowMode = function(e) {
       if (e.keyCode === this.SHIFT) {
         this.ACTIVE_DURATION = this.TRANSITION_DURATION * this.SLOW_MODE_MULTIPLIER;
-        this.computeDurations();
-        return this.slowModeState = true;
+        return this.computeDurations();
       }
     };
 
     Zoom.prototype.endSlowMode = function(e) {
       if (e.keyCode === this.SHIFT) {
         this.ACTIVE_DURATION = this.TRANSITION_DURATION;
-        this.computeDurations();
-        return this.slowModeState = false;
+        return this.computeDurations();
       }
     };
 
@@ -156,8 +154,8 @@
       };
       this.scaleString = "scale3d(" + scale.x + ", " + scale.y + ", 1)";
       this.translateString = "translate3d(" + posX + "px, " + posY + "px, 0)";
-      wrap.style.webkitTransform = "" + this.translateString;
-      big.style.webkitTransform = "" + this.scaleString;
+      wrap.style.webkitTransform = this.translateString;
+      big.style.webkitTransform = this.scaleString;
       wrap.style.opacity = "0";
       this.container.appendChild(wrap);
       scrollTop = document.body.scrollTop;
@@ -172,7 +170,7 @@
         wrap.style.opacity = "1";
         wrap.style.webkitTransform = finalTranslateString;
         big.style.webkitTransform = finalScaleString;
-        return window.setTimeout(function() {
+        window.setTimeout(function() {
           wrap.style.margin = "-" + (height / 2 + finalY - scrollTop) + "px 0 0 -" + (width / 2 + finalX) + "px";
           wrap.style.top = "50%";
           wrap.style.left = "50%";
@@ -189,6 +187,7 @@
           });
           return document.body.addEventListener("keyup", _this.checkKeyClosed, false);
         }, _this.ACTIVE_DURATION);
+        return _this.hideLoadingIndicator();
       }, 0);
     };
 

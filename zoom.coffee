@@ -16,8 +16,10 @@ class self.Zoom
 		@computeDurations()
 		
 		# Close delay (needed for choppiness fix)
-		@CLOSE_DELAY = 50
+		# EDIT: not needed. Keeping it anyways
+		@CLOSE_DELAY = 0
 		
+		# Various other initializations
 		@opened = false
 		@cache = []
 		@slowModeState = false
@@ -36,6 +38,8 @@ class self.Zoom
 		@TRANSFORM_DURATION = @ACTIVE_DURATION
 		@BOX_SHADOW_DURATION = Math.abs(@ACTIVE_DURATION - @BOX_SHADOW_OFFSET)
 		@OPACITY_DURATION = Math.abs(@ACTIVE_DURATION - @OPACITY_OFFSET)
+
+		# If the box is opened, we need to re-assign transitions
 		if @opened
 			big = @container.getElementsByClassName("image")[0]
 			big.style.webkitTransition = "-webkit-transform #{@TRANSFORM_DURATION}ms"
@@ -53,15 +57,13 @@ class self.Zoom
 		if e.keyCode is @SHIFT
 			@ACTIVE_DURATION = @TRANSITION_DURATION * @SLOW_MODE_MULTIPLIER
 			@computeDurations()
-			@slowModeState = true
 	
 	# Exit slow mode
 	endSlowMode: (e) =>
 		if e.keyCode is @SHIFT
 			@ACTIVE_DURATION = @TRANSITION_DURATION
-			@computeDurations()		
-			@slowModeState = false
-	
+			@computeDurations()
+
 	# Click listener for outside box
 	checkClicked: (e) =>
 		if e.srcElement.className isnt "image" and @opened
@@ -80,6 +82,7 @@ class self.Zoom
 		if element.loaded
 			@doZoom element
 		else
+			# If the element isn't loaded, create it
 			image = document.createElement "img"
 			image.onload = =>
 				@doZoom element
@@ -94,6 +97,8 @@ class self.Zoom
 		# Retrieve cached image
 		fullURL = element.getAttribute "href"
 		image = @cache[fullURL]
+
+		# Sometimes the image didn't get put the cache
 		if image is undefined
 			image = document.createElement "img"
 			image.setAttribute "src", fullURL
@@ -154,8 +159,8 @@ class self.Zoom
 		# Make the wrapping div same as thumb
 		@scaleString = "scale3d(#{scale.x}, #{scale.y}, 1)"
 		@translateString = "translate3d(#{posX}px, #{posY}px, 0)"
-		wrap.style.webkitTransform = "#{@translateString}"
-		big.style.webkitTransform = "#{@scaleString}"
+		wrap.style.webkitTransform = @translateString
+		big.style.webkitTransform = @scaleString
 		wrap.style.opacity = "0"
 		
 		# Add to body
@@ -196,9 +201,11 @@ class self.Zoom
 					@close()
 				document.body.addEventListener "keyup", @checkKeyClosed, false
 			, @ACTIVE_DURATION
+			
+			@hideLoadingIndicator()
 		, 0
 	
-	# Close it	
+	# Close it
 	close: ->
 		# Remove click listener
 		document.body.removeEventListener "click", @checkClicked, false
@@ -214,6 +221,8 @@ class self.Zoom
 		window.setTimeout =>
 			wrap.style.boxShadow = "none"
 		, 0
+		
+		# Close delay needed to avoid box shadow glitch
 		window.setTimeout =>
 			wrap.style.webkitTransform = @translateString
 			wrap.style.opacity = "0"
@@ -222,8 +231,8 @@ class self.Zoom
 		
 		# This throws an error sometimes, but I am not sure how to fix
 		window.setTimeout =>
-			try	
-				@container.removeChild wrap			
+			try
+				@container.removeChild wrap
 			catch error
 				if window.verbose then console.log error
 		, newTransitionDuration

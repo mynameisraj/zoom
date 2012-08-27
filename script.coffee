@@ -42,7 +42,7 @@ handleZoom = (e) ->
 			window.zoom.hideLoadingIndicator()
 			@loaded = true
 			window.zoom.zoom this
-		image.src = @getAttribute "href"		
+		image.src = @getAttribute "href"
 	
 # Caches image
 cacheImage = (e) ->
