@@ -26,5 +26,4 @@ The included file script.js will take care of this for you, but simply use the f
 Zoom is not perfect. I made it for me, so I can't guarantee that it will work for you. I am planning to fix the following things, however:
 
 - Add cross-browser support
-- Add titles for images
 - Combine script.js and zoom.js into one
