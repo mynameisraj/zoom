@@ -80,40 +80,51 @@
       }
     };
 
-    Zoom.prototype.showLoadingIndicator = function() {};
+    Zoom.prototype.showLoadingIndicator = function() {
+      return console.log("loading indicator being shown");
+    };
 
     Zoom.prototype.hideLoadingIndicator = function() {};
 
-    Zoom.prototype.zoom = function(element) {
+    Zoom.prototype.zoom = function(element, thumb) {
       var image,
         _this = this;
+      if (!thumb) {
+        thumb = element.firstChild;
+      }
       if (element.loaded) {
-        return this.doZoom(element);
+        return this.doZoom(element, thumb);
       } else {
         image = document.createElement("img");
         image.onload = function() {
-          return _this.doZoom(element);
+          return _this.doZoom(element, thumb);
         };
-        return image.src = element.getAttribute("href");
+        return image.src = element.getAttribute("data-url") ? element.getAttribute("data-url") : element.getAttribute("href");
       }
     };
 
-    Zoom.prototype.doZoom = function(element) {
-      var big, finalScaleString, finalTranslateString, finalX, finalY, fullURL, height, image, posX, posY, position, scale, scrollTop, thumb, title, width, wrap,
+    Zoom.prototype.doZoom = function(element, thumb) {
+      var big, finalScaleString, finalTranslateString, finalX, finalY, fullURL, height, image, originalHeight, posX, posY, position, scale, scrollTop, title, width, wrap,
         _this = this;
       if (this.opened) {
         this.close();
       }
       this.opened = true;
-      fullURL = element.getAttribute("href");
+      fullURL = element.getAttribute("data-url") ? element.getAttribute("data-url") : element.getAttribute("href");
       image = this.cache[fullURL];
       if (image === void 0) {
         image = document.createElement("img");
         image.setAttribute("src", fullURL);
         this.cache[fullURL] = image;
       }
+      originalHeight = image.height;
       width = image.width;
       height = image.height;
+      if (window.devicePixelRatio > 1) {
+        width *= .5;
+        height *= .5;
+        originalHeight *= .5;
+      }
       if (element.getAttribute("title")) {
         title = document.createElement("div");
         title.className = "title";
@@ -129,7 +140,6 @@
         height += title.offsetHeight;
         document.body.removeChild(title);
       }
-      thumb = element.firstChild;
       position = getPosition(thumb);
       posX = position.x - (width - thumb.offsetWidth) / 2;
       posY = position.y - (height - thumb.offsetHeight) / 2;
@@ -138,6 +148,8 @@
       big.setAttribute("src", fullURL);
       big.style.webkitTransition = "-webkit-transform " + this.TRANSFORM_DURATION + "ms";
       big.style.display = "block";
+      big.style.width = width + "px";
+      big.style.height = originalHeight + "px";
       wrap = document.createElement("div");
       wrap.className = "wrap";
       wrap.appendChild(big);

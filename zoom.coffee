@@ -71,6 +71,7 @@ class self.Zoom
 			
 	# Shows the loading indicator
 	showLoadingIndicator: ->
+		console.log "loading indicator being shown"
 		# You can fill out this function if you need a loading indicator to be displayed
 	
 	# Hides the loading indicator
@@ -78,24 +79,26 @@ class self.Zoom
 		# Here is where you hide the loading indicator that you created above
 			
 	# Zoom selected image
-	zoom: (element) ->
+	zoom: (element, thumb) ->
+		if not thumb then thumb = element.firstChild
+		
 		if element.loaded
-			@doZoom element
+			@doZoom element, thumb
 		else
 			# If the element isn't loaded, create it
 			image = document.createElement "img"
 			image.onload = =>
-				@doZoom element
-			image.src = element.getAttribute "href"
+				@doZoom element, thumb
+			image.src = if element.getAttribute "data-url" then element.getAttribute "data-url" else element.getAttribute "href"
 		
-	doZoom: (element) ->
+	doZoom: (element, thumb) ->
 		# Close the zoomed image
 		if @opened
 			@close()
 		@opened = true
 		
 		# Retrieve cached image
-		fullURL = element.getAttribute "href"
+		fullURL = if element.getAttribute "data-url" then element.getAttribute "data-url" else element.getAttribute "href"
 		image = @cache[fullURL]
 
 		# Sometimes the image didn't get put the cache
@@ -103,8 +106,13 @@ class self.Zoom
 			image = document.createElement "img"
 			image.setAttribute "src", fullURL
 			@cache[fullURL] = image
+		originalHeight = image.height
 		width = image.width
 		height = image.height
+		if window.devicePixelRatio > 1
+			width *= .5
+			height *= .5
+			originalHeight *= .5
 		
 		# Create title, recompute height
 		if element.getAttribute "title"
@@ -123,7 +131,6 @@ class self.Zoom
 			document.body.removeChild title
 		
 		# Figure out where our element is based on its thumbnail
-		thumb = element.firstChild
 		position = getPosition thumb
 		posX = position.x - (width - thumb.offsetWidth)/2
 		posY = position.y - (height - thumb.offsetHeight)/2
@@ -136,6 +143,8 @@ class self.Zoom
 		# Add styles to DOM image
 		big.style.webkitTransition = "-webkit-transform #{@TRANSFORM_DURATION}ms"
 		big.style.display = "block" # For more accurate placement
+		big.style.width = width + "px"
+		big.style.height = originalHeight + "px"
 		
 		# Create wrapping div
 		wrap = document.createElement "div"
